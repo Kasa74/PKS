@@ -78,11 +78,35 @@ class _NotesListScreenState extends State<NotesListScreen> {
     }
   }
 
-  void _removeNote(int index) {
-    setState(() {
-      items.removeAt(index);
-    });
+  void _removeNote(BuildContext context, int index) {
+    showDialog(
+      context: context,
+      builder: (BuildContext context) {
+        return AlertDialog(
+          title: const Text('Подтверждение удаления'),
+          content: const Text('Вы уверены, что хотите удалить этот товар?'),
+          actions: <Widget>[
+            TextButton(
+              onPressed: () {
+                Navigator.of(context).pop(); // Закрыть диалог без удаления
+              },
+              child: const Text('Отмена'),
+            ),
+            TextButton(
+              onPressed: () {
+                setState(() {
+                  items.removeAt(index); // Удаляем товар
+                });
+                Navigator.of(context).pop(); // Закрыть диалог
+              },
+              child: const Text('Удалить'),
+            ),
+          ],
+        );
+      },
+    );
   }
+
 
   @override
   Widget build(BuildContext context) {
@@ -126,7 +150,7 @@ class _NotesListScreenState extends State<NotesListScreen> {
                           padding: const EdgeInsets.only(top: 120),
                           child: IconButton(
                             icon: Icon(Icons.delete),
-                            onPressed: () => _removeNote(index),
+                            onPressed: () => _removeNote(context, index),
                           ),
                         ),
                       ),
@@ -135,13 +159,6 @@ class _NotesListScreenState extends State<NotesListScreen> {
                 ),
               ),
             );
-            ListTile(
-            title: Text(items[index].title),
-            trailing: IconButton(
-              icon: Icon(Icons.delete),
-              onPressed: () => _removeNote(index),
-            ),
-          );
         },
       ),
       floatingActionButton: FloatingActionButton(
