@@ -15,9 +15,3 @@ class Product {
     required this.imgUrl
   });
 }
-
-class Products {
-  static final List<Product> items = [
-];
-
-}
