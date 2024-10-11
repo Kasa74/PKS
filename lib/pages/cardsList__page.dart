@@ -1,5 +1,6 @@
 import 'package:flutter/material.dart';
 import 'package:untitled/data/Products.dart';
+import 'package:untitled/models/CartItem.dart';
 import 'package:untitled/models/product.dart';
 import 'package:untitled/pages/product_card_page.dart';
 
@@ -7,10 +8,14 @@ class CardsListPage extends StatefulWidget {
   const CardsListPage({
     required this.favoriteProducts,
     required this.onFavoriteToggle,
+    required this.onAddToCart,
+    required this.removeCartItem
   });
 
   final Set<Product> favoriteProducts;
   final Function(Product) onFavoriteToggle;
+  final Function(Product) onAddToCart;
+  final Function(CartItem) removeCartItem;
 
 
 
@@ -39,7 +44,7 @@ class _CardsListPageState extends State<CardsListPage> {
   Widget build(BuildContext context) {
     return Scaffold(
       appBar: AppBar(
-        title: Text('Cards'),
+        title: Text('Товары'),
       ),
       body: items.isEmpty
           ? Center(child: Text('No cards yet, add a card!'))
@@ -48,7 +53,7 @@ class _CardsListPageState extends State<CardsListPage> {
           crossAxisCount: 2,
           crossAxisSpacing: 10,
           mainAxisSpacing: 10,
-          childAspectRatio: 1,
+          childAspectRatio: 0.78,
         ),
         padding: EdgeInsets.only(left: 20, right: 20),
         itemCount: items.length,
@@ -59,6 +64,21 @@ class _CardsListPageState extends State<CardsListPage> {
                 context,
                 MaterialPageRoute(builder: (context) => ProductPage(
                 item: items[index],
+                removeCartItem: widget.removeCartItem,
+                onAddToCart: (item) {
+                  widget.onAddToCart(item);
+                },
+                favoriteProducts: widget.favoriteProducts,
+                onFavoriteToggle: (item) {
+                  setState(() {
+                    if(widget.favoriteProducts.contains(item)){
+                      widget.favoriteProducts.remove(item);
+                    } else {
+                      widget.favoriteProducts.add(item);
+                    }
+
+                  });
+                },
                 onDelete: () {
                   setState(() {
                     widget.favoriteProducts.remove(items[index]);
@@ -72,35 +92,74 @@ class _CardsListPageState extends State<CardsListPage> {
 
                 child: Container(
 
-                  alignment: Alignment.topCenter,
+                  height: 200,
                   decoration: BoxDecoration(
-                      border: Border.all(color: Colors.black),
-                      borderRadius: BorderRadius.circular(24),
-                      image: DecorationImage(image: NetworkImage(items[index].imgUrl), fit: BoxFit.cover)
-                  ),
+                      borderRadius: BorderRadius.circular(24),),
                   child: Column(
                     children: [
-                      Padding(
-
-                        padding: const EdgeInsets.only(),
-                        child: Text(items[index].title,style: const TextStyle(color: Colors.black, fontWeight: FontWeight.bold, fontSize: 20)),
-                      ),
-                      Padding(padding: EdgeInsets.only(top: 100, right: 120),
-                        child: IconButton(
-                          onPressed: () {
-                            setState(() {
-                              widget.onFavoriteToggle(items[index]);
-                            });
-                          },
-                          icon: Icon(
-                            widget.favoriteProducts.contains(items[index])
-                                ? Icons.favorite
-                                : Icons.favorite_border,
-                            color: widget.favoriteProducts.contains(items[index])
-                                ? Colors.red
-                                : Colors.grey,
-                          ),
+                      Container(
+                  height: 160,
+                        alignment: Alignment.topCenter,
+                        decoration: BoxDecoration(
+                            color: Colors.white,
+                            borderRadius: BorderRadius.only(
+                              topLeft: Radius.circular(24),
+                              topRight: Radius.circular(24),
+                            ),
+                            image: DecorationImage(image: NetworkImage(items[index].imgUrl), fit: BoxFit.contain)
                         ),
+
+                        child:
+
+                            Padding(padding: EdgeInsets.only(left: 130),
+                              child: IconButton(
+                                color: Colors.white,
+                                onPressed: () {
+                                  setState(() {
+                                    widget.onFavoriteToggle(items[index]);
+                                  });
+                                },
+                                icon: Icon(
+
+                                  widget.favoriteProducts.contains(items[index])
+                                      ? Icons.favorite
+                                      : Icons.favorite_border,
+                                  color: widget.favoriteProducts.contains(items[index])
+                                      ? Colors.red
+                                      : Colors.grey,
+                                ),
+                              ),
+                            )
+
+                      ),
+                      Container(height: 70, width: 200,
+
+                      decoration: BoxDecoration(
+                        color: Color.fromARGB(99, 99, 99, 100 ),
+                        borderRadius: BorderRadius.only(
+
+                          bottomLeft: Radius.circular(24),
+                          bottomRight: Radius.circular(24),
+                        ),
+                      ),
+                      child: Padding(
+                        padding: const EdgeInsets.only(left: 10, right: 10, top: 3),
+                        child: Column(
+                          crossAxisAlignment: CrossAxisAlignment.start,
+                          children: [
+                            Text(
+                              items[index].price.toStringAsFixed(items[index].price.truncateToDouble() == items[index].price ? 0 : 1) + " " + "₽",
+                              style: TextStyle(color: Colors.white, fontWeight: FontWeight.bold, fontSize: 20),
+                              overflow: TextOverflow.ellipsis,
+                            ),
+                            Text(
+                              items[index].title,
+                              style: TextStyle(color: Colors.white, fontWeight: FontWeight.bold, fontSize: 18),
+                              overflow: TextOverflow.ellipsis,
+                            ),
+                          ],
+                        ),
+                      )
                       )
                     ],
                   ),
@@ -123,9 +182,11 @@ class AddCardScreen extends StatefulWidget {
 }
 
 class _AddCardScreenState extends State<AddCardScreen> {
-  final TextEditingController _noteControllerTitle = TextEditingController();
-  final TextEditingController _noteControllerDescription = TextEditingController();
-  final TextEditingController _noteControllerImageURL = TextEditingController();
+  final TextEditingController _itemControllerTitle = TextEditingController();
+  final TextEditingController _itemControllerDescription = TextEditingController();
+  final TextEditingController _itemControllerPrice = TextEditingController();
+  final TextEditingController _itemControllerImageURL = TextEditingController();
+
 
   @override
   Widget build(BuildContext context) {
@@ -138,21 +199,28 @@ class _AddCardScreenState extends State<AddCardScreen> {
         child: Column(
           children: [
             TextField(
-              controller: _noteControllerTitle,
+              controller: _itemControllerTitle,
               decoration: InputDecoration(
                 labelText: 'Enter card Title',
               ),
               maxLines: 1,
             ),
             TextField(
-              controller: _noteControllerDescription,
+              controller: _itemControllerDescription,
               decoration: InputDecoration(
                 labelText: 'Enter card Description',
               ),
               maxLines: 1,
             ),
             TextField(
-              controller: _noteControllerImageURL,
+              controller: _itemControllerPrice,
+              decoration: InputDecoration(
+                labelText: 'Enter card price',
+              ),
+              maxLines: 1,
+            ),
+            TextField(
+              controller: _itemControllerImageURL,
               decoration: InputDecoration(
                 labelText: 'Enter card image path',
               ),
@@ -161,8 +229,8 @@ class _AddCardScreenState extends State<AddCardScreen> {
             SizedBox(height: 20),
             ElevatedButton(
               onPressed: () {
-                if(_noteControllerImageURL.text.isNotEmpty && _noteControllerDescription.text.isNotEmpty && _noteControllerImageURL.text.isNotEmpty) {
-                  Product newCard = Product(id: DateTime.now().millisecondsSinceEpoch, title: _noteControllerTitle.text, description: _noteControllerDescription.text, imgUrl: _noteControllerImageURL.text);
+                if(_itemControllerImageURL.text.isNotEmpty && _itemControllerDescription.text.isNotEmpty && _itemControllerPrice.text.isNotEmpty && _itemControllerImageURL.text.isNotEmpty) {
+                  Product newCard = Product(id: DateTime.now().millisecondsSinceEpoch, title: _itemControllerTitle.text, description: _itemControllerDescription.text,price: double.tryParse(_itemControllerPrice.text) ?? 0.0, imgUrl: _itemControllerImageURL.text);
                   Navigator.pop(context, newCard);
 
                 }

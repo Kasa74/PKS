@@ -1,5 +1,7 @@
 import 'package:flutter/material.dart';
+import 'package:untitled/models/CartItem.dart';
 import 'package:untitled/models/product.dart';
+import 'package:untitled/pages/cart__page.dart';
 import 'package:untitled/pages/favorite__page.dart';
 import 'package:untitled/pages/profile__page.dart';
 import 'package:untitled/pages/cardsList__page.dart';
@@ -20,7 +22,13 @@ class MyApp extends StatelessWidget {
       debugShowCheckedModeBanner: false,
       title: 'Flutter Demo',
       theme: ThemeData(
-        primarySwatch: Colors.blue
+        brightness: Brightness.dark,
+        primarySwatch: Colors.blue,
+        primaryColor: Colors.blue[800],
+        canvasColor: Colors.grey[850],
+        cardColor: Colors.grey[800],
+        dialogBackgroundColor: Colors.grey[700],
+        dividerColor: Colors.grey[600],
       ),
       home: HomePage(),
     );
@@ -35,6 +43,7 @@ class HomePage extends StatefulWidget {
 class _HomePageState extends State<HomePage> {
   int _selectedIndex = 0;
   final Set<Product> favoriteProducts = {};
+  final Set<CartItem> cartItems = {};
 
   void _onItemTapped(int index) {
     setState(() {
@@ -52,15 +61,56 @@ setState(() {
 });
   }
 
+  void _addToCart(Product product){
+    setState(() {
+
+      bool itemExist = false;
+
+      for(CartItem cartItem in cartItems){
+        if(cartItem.id == product.id){
+          cartItem.count += 1;
+          itemExist = true;
+          break;
+        }
+      }
+
+      if (!itemExist) {
+        cartItems.add(CartItem(1,
+          id: product.id,
+          title: product.title,
+          description: product.description,
+          price: product.price,
+          imgUrl: product.imgUrl,
+        ));
+      }
+
+    });
+  }
+
+  void _removeCartItem(CartItem cartItem){
+    setState(() {
+      cartItems.remove(cartItem);
+    });
+  }
+
   @override
   Widget build(BuildContext context) {
     final List<Widget> _pages = <Widget>[
       CardsListPage(
         favoriteProducts: favoriteProducts,
-        onFavoriteToggle: _toggleFavorite,),
+        onFavoriteToggle: _toggleFavorite,
+        onAddToCart: _addToCart,
+        removeCartItem: _removeCartItem,
+      ),
       FavoritePage(
         favoriteProducts: favoriteProducts,
         onFavoriteToggle: _toggleFavorite,
+        onAddToCart: _addToCart,
+        removeCartItem: _removeCartItem,
+      ),
+      CartPage(
+        cartItems: cartItems,
+        removeCartItem: _removeCartItem,
       ),
       ProfilePage(),
     ];
@@ -74,6 +124,10 @@ setState(() {
         BottomNavigationBarItem(
           icon: Icon(Icons.favorite),
           label: 'Избранное',
+        ),
+        BottomNavigationBarItem(
+          icon: Icon(Icons.shopping_cart),
+          label: 'Корзина',
         ),
         BottomNavigationBarItem(
           icon: Icon(Icons.person),
