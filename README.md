@@ -1,16 +1,12 @@
-# untitled
+Программирование корпоративных систем
 
-A new Flutter project.
+Практическая работа 6
 
-## Getting Started
+Работы выполнил студент ЭФБО-03-22 Кудрявцев Н.Д.
 
-This project is a starting point for a Flutter application.
+![image](https://github.com/user-attachments/assets/62fe9dae-c9e4-485d-9919-b1ea7b9b8c5e)
+![image](https://github.com/user-attachments/assets/079374ea-8cda-4ae7-bbd5-44cb74232af0)
+![image](https://github.com/user-attachments/assets/d044761d-57fe-4b27-897d-00c0ea037f39)
+![image](https://github.com/user-attachments/assets/6b26049b-3eb6-40cb-a1f6-df285b0908b7)
 
-A few resources to get you started if this is your first Flutter project:
 
-- [Lab: Write your first Flutter app](https://docs.flutter.dev/get-started/codelab)
-- [Cookbook: Useful Flutter samples](https://docs.flutter.dev/cookbook)
-
-For help getting started with Flutter development, view the
-[online documentation](https://docs.flutter.dev/), which offers tutorials,
-samples, guidance on mobile development, and a full API reference.
