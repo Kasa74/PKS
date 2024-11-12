@@ -1,12 +1,10 @@
 import 'package:flutter/material.dart';
-import 'package:untitled/models/CartItem.dart';
-import 'package:untitled/models/product.dart';
-import 'package:untitled/pages/cart__page.dart';
-import 'package:untitled/pages/favorite__page.dart';
-import 'package:untitled/pages/profile__page.dart';
-import 'package:untitled/pages/cardsList__page.dart';
-
-
+import 'package:google_fonts/google_fonts.dart';
+import 'package:untitled/data/cartItemsData.dart';
+import 'package:untitled/models/productItem.dart';
+import 'package:untitled/pages/CartPage.dart';
+import 'package:untitled/pages/HomePage.dart';
+import 'package:untitled/pages/ProfilePage.dart';
 
 void main() {
   runApp(const MyApp());
@@ -15,35 +13,30 @@ void main() {
 class MyApp extends StatelessWidget {
   const MyApp({super.key});
 
-  // This widget is the root of your application.
   @override
   Widget build(BuildContext context) {
     return MaterialApp(
       debugShowCheckedModeBanner: false,
-      title: 'Flutter Demo',
+      title: 'Клиника',
       theme: ThemeData(
-        brightness: Brightness.dark,
-        primarySwatch: Colors.blue,
-        primaryColor: Colors.blue[800],
-        canvasColor: Colors.grey[850],
-        cardColor: Colors.grey[800],
-        dialogBackgroundColor: Colors.grey[700],
-        dividerColor: Colors.grey[600],
+        textTheme: GoogleFonts.montserratTextTheme(),
       ),
-      home: HomePage(),
+      home: const Home(),
     );
   }
 }
 
-class HomePage extends StatefulWidget {
+class Home extends StatefulWidget {
+  const Home({super.key});
+
   @override
-  _HomePageState createState() => _HomePageState();
+  State<Home> createState() => _HomeState();
 }
 
-class _HomePageState extends State<HomePage> {
+class _HomeState extends State<Home> {
   int _selectedIndex = 0;
-  final Set<Product> favoriteProducts = {};
-  final Set<CartItem> cartItems = {};
+
+  final Cart cart = Cart();
 
   void _onItemTapped(int index) {
     setState(() {
@@ -51,92 +44,62 @@ class _HomePageState extends State<HomePage> {
     });
   }
 
-  void _toggleFavorite(Product product){
-setState(() {
-  if (favoriteProducts.contains(product)) {
-    favoriteProducts.remove(product);
-  } else {
-    favoriteProducts.add(product);
-  }
-});
-  }
-
-  void _addToCart(Product product){
-    setState(() {
-
-      bool itemExist = false;
-
-      for(CartItem cartItem in cartItems){
-        if(cartItem.id == product.id){
-          cartItem.count += 1;
-          itemExist = true;
-          break;
-        }
-      }
-
-      if (!itemExist) {
-        cartItems.add(CartItem(1,
-          id: product.id,
-          title: product.title,
-          description: product.description,
-          price: product.price,
-          imgUrl: product.imgUrl,
-        ));
-      }
-
-    });
-  }
-
-  void _removeCartItem(CartItem cartItem){
-    setState(() {
-      cartItems.remove(cartItem);
-    });
-  }
-
   @override
   Widget build(BuildContext context) {
-    final List<Widget> _pages = <Widget>[
-      CardsListPage(
-        favoriteProducts: favoriteProducts,
-        onFavoriteToggle: _toggleFavorite,
-        onAddToCart: _addToCart,
-        removeCartItem: _removeCartItem,
-      ),
-      FavoritePage(
-        favoriteProducts: favoriteProducts,
-        onFavoriteToggle: _toggleFavorite,
-        onAddToCart: _addToCart,
-        removeCartItem: _removeCartItem,
-      ),
-      CartPage(
-        cartItems: cartItems,
-        removeCartItem: _removeCartItem,
-      ),
-      ProfilePage(),
+    final List<Widget> pages = [
+      HomePage(cart: cart),
+      CartPage(cart: cart),
+      const ProfilePage(),
     ];
+
     return Scaffold(
-      body: _pages.elementAt(_selectedIndex),
-      bottomNavigationBar: BottomNavigationBar(items: const <BottomNavigationBarItem>[
-        BottomNavigationBarItem(
-          icon: Icon(Icons.home),
-        label: 'Главная',
+      body: pages[_selectedIndex],
+      bottomNavigationBar: Container(
+        height: 88,
+        child: BottomNavigationBar(
+          items: [
+            BottomNavigationBarItem(
+              label: 'Главная',
+              icon: Column(
+                mainAxisAlignment: MainAxisAlignment.center,
+                children: [
+                  Image.asset(
+                    'assets/img/Home.png',
+                    color: _selectedIndex == 0 ? Color(0xFF1A6FEE) : Color(0xFF898A8D),
+                  ),
+                ],
+              ),
+            ),
+            BottomNavigationBarItem(
+              label: 'Корзина',
+              icon: Column(
+                mainAxisAlignment: MainAxisAlignment.center,
+                children: [
+                  Image.asset(
+                    'assets/img/Cart.png',
+                    color: _selectedIndex == 1 ? Color(0xFF1A6FEE) : Color(0xFF898A8D),
+                  ),
+                ],
+              ),
+            ),
+            BottomNavigationBarItem(
+              label: 'Профиль',
+              icon: Column(
+                mainAxisAlignment: MainAxisAlignment.center,
+                children: [
+                  Image.asset(
+                    'assets/img/profile.png',
+                    color: _selectedIndex == 2 ? Color(0xFF1A6FEE) : Color(0xFF898A8D),
+                  ),
+                ],
+              ),
+            ),
+          ],
+          currentIndex: _selectedIndex,
+          selectedItemColor: Color(0xFF1A6FEE),
+          unselectedItemColor: Color(0xFF898A8D),
+          onTap: _onItemTapped,
         ),
-        BottomNavigationBarItem(
-          icon: Icon(Icons.favorite),
-          label: 'Избранное',
-        ),
-        BottomNavigationBarItem(
-          icon: Icon(Icons.shopping_cart),
-          label: 'Корзина',
-        ),
-        BottomNavigationBarItem(
-          icon: Icon(Icons.person),
-          label: 'Профиль',
-        )
-      ],
-      currentIndex: _selectedIndex,
-        selectedItemColor: const Color.fromARGB(255, 38, 148, 88),
-        onTap: _onItemTapped,
       ),
     );
   }
