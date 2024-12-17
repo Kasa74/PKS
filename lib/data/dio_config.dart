@@ -1,0 +1,15 @@
+import 'package:dio/dio.dart';
+
+Dio getHttpClient() {
+  BaseOptions options = BaseOptions(
+      baseUrl: "http://localhost:8080",
+      responseType: ResponseType.plain,
+      validateStatus: (code) {
+        if (code == null) {
+          return false;
+        }
+        return code >= 200;
+      });
+
+  return Dio(options);
+}
