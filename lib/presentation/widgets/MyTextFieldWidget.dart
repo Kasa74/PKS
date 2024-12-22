@@ -14,9 +14,9 @@ class MyTextFieldWidget extends StatefulWidget {
 
   @override
   State<MyTextFieldWidget> createState() => _MyTextFieldWidgetState(
-    onChanged: onChanged,
-    hintText: hintText,
-    initialValue: initialValue
+      onChanged: onChanged,
+      hintText: hintText,
+      initialValue: initialValue
   );
 }
 

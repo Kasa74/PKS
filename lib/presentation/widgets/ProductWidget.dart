@@ -1,4 +1,5 @@
 import 'package:flutter/material.dart';
+import 'package:flutter_task3/data/favorite_service.dart';
 import 'package:flutter_task3/presentation/models/ProductModel.dart';
 
 class ProductWidget extends StatelessWidget {
@@ -11,7 +12,7 @@ class ProductWidget extends StatelessWidget {
     required this.product,
     required this.onTap,
     required this.onLikeClicked,
-});
+  });
 
   @override
   Widget build(BuildContext context) {
@@ -35,6 +36,14 @@ class ProductWidget extends StatelessWidget {
                   const Spacer(),
                   IconButton(
                       onPressed: () {
+                        if (product.id != null) {
+                          if (product.isFavorite) {
+                            unlikeProduct(product.id!);
+                          }
+                          else {
+                            likeProduct(product.id!);
+                          }
+                        }
                         onLikeClicked();
                       },
                       icon: Icon(product.getFavoriteIconData())
@@ -42,19 +51,19 @@ class ProductWidget extends StatelessWidget {
                 ],
               ),
               Text(
-                  "${product.cost.round()} ₽",
+                "${product.price} \$",
                 style: const TextStyle(
-                  color: Colors.blueAccent,
-                  fontWeight: FontWeight.w700
+                    color: Colors.blueAccent,
+                    fontWeight: FontWeight.w700
                 ),
               ),
               Text(product.title, maxLines: 1, overflow: TextOverflow.ellipsis),
               Text(
-                  product.subtitle,
-                  maxLines: 2,
-                  overflow: TextOverflow.ellipsis,
+                product.subtitle,
+                maxLines: 2,
+                overflow: TextOverflow.ellipsis,
                 style: const TextStyle(
-                  fontSize: 10
+                    fontSize: 10
                 ),
               ),
             ],

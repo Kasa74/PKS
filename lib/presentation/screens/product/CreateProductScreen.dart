@@ -3,7 +3,7 @@ import 'package:flutter_task3/presentation/models/ProductModel.dart';
 import 'package:flutter_task3/presentation/widgets/MyNumericFieldWidget.dart';
 import 'package:flutter_task3/presentation/widgets/MyTextFieldWidget.dart';
 
-import '../../../data/ProductsData.dart';
+import '../../../data/products_service.dart';
 
 class CreateProductScreen extends StatefulWidget {
   const CreateProductScreen({
@@ -15,7 +15,7 @@ class CreateProductScreen extends StatefulWidget {
 
   @override
   State<CreateProductScreen> createState() => _CreateProductScreenState(
-    onProductCreated: onProductCreated
+      onProductCreated: onProductCreated
   );
 }
 

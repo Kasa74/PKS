@@ -1,11 +1,11 @@
 import 'package:flutter/material.dart';
-import 'package:flutter_task3/data/ProductsData.dart';
+import 'package:flutter_task3/data/CartService.dart';
+import 'package:flutter_task3/data/products_service.dart';
 import 'package:flutter_task3/presentation/screens/product/CreateProductScreen.dart';
+import 'package:flutter_task3/presentation/screens/product/EditProductScreen.dart';
 import 'package:flutter_task3/presentation/screens/product/ProductDetailsScreen.dart';
 import 'package:flutter_task3/presentation/widgets/ProductWidget.dart';
 
-import '../../data/ShoppingCartData.dart';
-import '../models/ShopCartItemModel.dart';
 
 class MainScreen extends StatefulWidget {
   const MainScreen({super.key});
@@ -20,7 +20,7 @@ class _MainScreenState extends State<MainScreen> {
   @override
   void initState() {
     super.initState();
-    var futureProducts = getProducts();
+    var futureProducts = initializeProducts();
     futureProducts.then((value) => {
       setState(() {
         products.addAll(value);
@@ -46,26 +46,34 @@ class _MainScreenState extends State<MainScreen> {
                   context,
                   MaterialPageRoute(
                     builder: (context) => ProductDetailScreen(
-                      product: product,
+                      product: products[index],
                       onDeleteClicked: () {
                         setState(() {
                           products.remove(product);
-                          initialShoppingCartData.removeWhere((element) => element.id == product.id);
+                          deleteProductFromCart(product);
                           sharedProducts.remove(product);
                         });
                       }, onInCartPressed: () {
-                      initialShoppingCartData.add(ShopCartItemModel(
-                          product.id,
-                          product.title,
-                          product.subtitle,
-                          product.imageUri,
-                          product.cost,
-                          1
-                      ));
-                      }, onLikeClicked: () {
-                        setState(() {
-                          product.isFavorite = !product.isFavorite;
-                        });
+                      increaseCartItemCount(product.id);
+                    },
+                      onEditPressed: (onEdited) {
+                        Navigator.push(context, MaterialPageRoute(
+                            builder: (context) => EditProductScreen(
+                              onProductEdited: (newProduct) {
+                                onEdited(newProduct);
+                                var productsFuture = getProducts();
+                                productsFuture.then((value) =>
+                                    setState(() {
+                                      products = value;
+                                    })
+                                );
+                                setState(() {
+                                  sharedProducts[index] = newProduct;
+                                });
+                              },
+                              productModel: product,
+                            )
+                        ));
                       },
                     ),
                   ),
@@ -75,7 +83,7 @@ class _MainScreenState extends State<MainScreen> {
                 setState(() {
                   product.isFavorite = !product.isFavorite;
                 });
-                },
+              },
             );
           },
         ),
@@ -84,13 +92,13 @@ class _MainScreenState extends State<MainScreen> {
         Navigator.push(
           context,
           MaterialPageRoute(
-            builder: (context) => CreateProductScreen(
-              onProductCreated: (product) {
-                setState(() {
-                  products.add(product!);
-                });
-              },
-            )
+              builder: (context) => CreateProductScreen(
+                onProductCreated: (product) {
+                  setState(() {
+                    products.add(product!);
+                  });
+                },
+              )
           ),
         );
       },

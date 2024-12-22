@@ -1,7 +1,7 @@
 import 'package:flutter/material.dart';
 import 'package:flutter_task3/presentation/screens/profile/EditProfileScreen.dart';
 
-import '../../../data/ProfileData.dart';
+import '../../../data/profile_service.dart';
 import '../../models/ProfileModel.dart';
 
 class ProfileScreen extends StatefulWidget {

@@ -1,24 +1,42 @@
 import 'package:flutter/material.dart';
 import 'package:flutter_task3/presentation/models/ProductModel.dart';
 
-import '../../../data/ProductsData.dart';
+import '../../../data/favorite_service.dart';
+import '../../../data/products_service.dart';
 
-class ProductDetailScreen extends StatelessWidget {
-  final ProductModel product;
+class ProductDetailScreen extends StatefulWidget {
+  ProductModel product;
   final VoidCallback onDeleteClicked;
   final VoidCallback onInCartPressed;
-  final VoidCallback onLikeClicked;
+  final ValueChanged<ValueChanged<ProductModel>> onEditPressed;
 
-  const ProductDetailScreen({
+  ProductDetailScreen({
     super.key,
     required this.product,
     required this.onDeleteClicked,
     required this.onInCartPressed,
-    required this.onLikeClicked,
+    required this.onEditPressed,
   });
 
   @override
+  State<ProductDetailScreen> createState() => _ProductDetailScreenState();
+}
+
+class _ProductDetailScreenState extends State<ProductDetailScreen> {
+  late ProductModel product;
+
+  @override
+  void initState() {
+    product = widget.product;
+    super.initState();
+  }
+
+  @override
   Widget build(BuildContext context) {
+    final ValueChanged<ProductModel> onProductEdited = (newProduct) => setState(() {
+      product = newProduct;
+    });
+
     return Scaffold(
       appBar: AppBar(
         title: Text(product.title),
@@ -42,7 +60,7 @@ class ProductDetailScreen extends StatelessWidget {
                     ),
                     const Padding(padding: EdgeInsets.symmetric(vertical: 8)),
                     Text(
-                      "${product.cost.round()}₽",
+                      "${product.price} \$",
                       style: const TextStyle(fontSize: 24, fontWeight: FontWeight.bold),
                     ),
                     const SizedBox(height: 8.0),
@@ -59,7 +77,20 @@ class ProductDetailScreen extends StatelessWidget {
               children: [
                 IconButton(
                     onPressed: () {
-                      onLikeClicked();
+                      if (product.isFavorite) {
+                        unlikeProduct(product.id!);
+                      }
+                      else {
+                        likeProduct(product.id!);
+                      }
+
+                      setState(() {
+                        product.isFavorite = !product.isFavorite;
+                      });
+
+                      if (product.id == null) {
+                        return;
+                      }
                     },
                     icon: Icon(product.getFavoriteIconData())
                 ),
@@ -67,23 +98,32 @@ class ProductDetailScreen extends StatelessWidget {
                   width: 8,
                 ),
                 OutlinedButton(
-                  onPressed: () {
-                    onInCartPressed();
-                  },
-                  child: const Text("В корзину")
+                    onPressed: () {
+                      widget.onInCartPressed();
+                    },
+                    child: const Text("В корзину")
                 ),
                 const SizedBox(
                   width: 8,
                 ),
                 OutlinedButton(
-                  onPressed: () {
-                    onDeleteClicked();
-                    if (product.id != null) {
-                      deleteProduct(product.id!);
-                    }
-                    Navigator.pop(context);
-                  },
-                  child: const Text("Удалить")
+                    onPressed: () {
+                      widget.onDeleteClicked();
+                      if (widget.product.id != null) {
+                        deleteProduct(widget.product.id!);
+                      }
+                      Navigator.pop(context);
+                    },
+                    child: const Text("Удалить")
+                ),
+                const SizedBox(
+                  width: 8,
+                ),
+                OutlinedButton(
+                    onPressed: () {
+                      widget.onEditPressed(onProductEdited);
+                    },
+                    child: const Text("Изм.")
                 ),
               ],
             )

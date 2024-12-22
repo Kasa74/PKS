@@ -1,4 +1,5 @@
 import 'package:flutter/material.dart';
+import 'package:flutter_task3/data/CartService.dart';
 
 import '../models/ShopCartItemModel.dart';
 import '../screens/cart/CartItemCountChanger.dart';
@@ -33,6 +34,7 @@ class ShopCartItem extends StatelessWidget {
               SlidableAction(
                 onPressed: (context) {
                   deleteItem();
+                  deleteCartItem(item);
                 },
                 backgroundColor: Colors.red,
                 foregroundColor: Colors.white,
@@ -51,18 +53,25 @@ class ShopCartItem extends StatelessWidget {
               fit: BoxFit.cover,
             ),
             title: Text(item.title),
-            subtitle: Text("${item.cost.round()} ₽"),
+            subtitle: Text("${item.cost} \$"),
             trailing: CartItemCountChanger(
               count: item.count,
               onIncreasePressed: () {
                 onCountChanged(item.count + 1);
+                if (item.id != null) {
+                  increaseCartItemCount(item.id!);
+                }
               },
               onDecreasePressed: () {
                 if (item.count == 1) {
                   deleteItem();
+                  deleteCartItem(item);
                 }
                 else {
                   onCountChanged(item.count - 1);
+                  if (item.id != null) {
+                    decreaseCartItemCount(item.id!);
+                  }
                 }
               },
             ),

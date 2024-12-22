@@ -6,15 +6,15 @@ class ProductModel {
       this.title,
       this.subtitle,
       this.imageUri,
-      this.cost,
+      this.price,
       this.isFavorite,
       );
 
-  final int? id;
-  final String title;
-  final String subtitle;
-  final String imageUri;
-  final double cost;
+  int? id;
+  String title;
+  String subtitle;
+  String imageUri;
+  double price;
   bool isFavorite = false;
 
   IconData getFavoriteIconData() {
