@@ -25,12 +25,11 @@ class CartItemCountChanger extends StatelessWidget {
             onPressed: () {
                 onIncreasePressed();
             },
-            icon: const Icon(Icons.plus_one)
+            icon: const Icon(Icons.add)
         ),
         Container(
           height: 30,
           width: 30,
-          color: Colors.white,
           child: Center(
               child: Text(count.toString(), style: const TextStyle(fontSize: 20))
           ),
@@ -39,7 +38,7 @@ class CartItemCountChanger extends StatelessWidget {
             onPressed: () {
                 onDecreasePressed();
             },
-            icon: const Icon(Icons.exposure_minus_1)
+            icon: const Icon(Icons.remove)
         ),
       ],
     );
