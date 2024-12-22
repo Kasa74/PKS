@@ -42,7 +42,7 @@ class ProductDetailScreen extends StatelessWidget {
                     ),
                     const Padding(padding: EdgeInsets.symmetric(vertical: 8)),
                     Text(
-                      "${product.cost}₽",
+                      "${product.cost.round()}₽",
                       style: const TextStyle(fontSize: 24, fontWeight: FontWeight.bold),
                     ),
                     const SizedBox(height: 8.0),
