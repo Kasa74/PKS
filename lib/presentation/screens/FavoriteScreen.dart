@@ -58,6 +58,7 @@ class _FavoriteScreenState extends State<FavoriteScreen> {
                         onLikeClicked: () {
                         setState(() {
                           product.isFavorite = !product.isFavorite;
+                          products = sharedProducts.where((element) => element.isFavorite).toList();
                         });
                       },),
                     ),
@@ -66,6 +67,7 @@ class _FavoriteScreenState extends State<FavoriteScreen> {
                 onLikeClicked: () {
                   setState(() {
                     product.isFavorite = !product.isFavorite;
+                    products = sharedProducts.where((element) => element.isFavorite).toList();
                   });
               },
               );
