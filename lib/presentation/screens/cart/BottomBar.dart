@@ -18,7 +18,7 @@ class ShoppingCartBottomBar extends StatelessWidget {
           children: [
             Text("$totalCount элементов", style: const TextStyle(fontSize: 20)),
             const Spacer(),
-            Text("Итого: ${totalPrice.round()}", style: const TextStyle(fontSize: 20)),
+            Text("Итого: ${totalPrice.round()} ₽", style: const TextStyle(fontSize: 20)),
           ],
         ),
         SizedBox(

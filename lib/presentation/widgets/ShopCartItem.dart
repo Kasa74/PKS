@@ -51,7 +51,7 @@ class ShopCartItem extends StatelessWidget {
               fit: BoxFit.cover,
             ),
             title: Text(item.title),
-            subtitle: Text("${item.cost}₽"),
+            subtitle: Text("${item.cost.round()} ₽"),
             trailing: CartItemCountChanger(
               count: item.count,
               onIncreasePressed: () {
