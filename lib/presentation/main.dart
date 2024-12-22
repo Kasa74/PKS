@@ -13,10 +13,15 @@ class MyApp extends StatelessWidget {
   Widget build(BuildContext context) {
     return MaterialApp(
     debugShowCheckedModeBanner: false,
-      theme: ThemeData(
-        colorScheme: ColorScheme.fromSeed(seedColor: Colors.deepPurple),
-        useMaterial3: true,
-      ),
+        theme: ThemeData(
+          brightness: Brightness.dark,
+          primarySwatch: Colors.blue,
+          primaryColor: Colors.blue[800],
+          canvasColor: Colors.grey[850],
+          cardColor: Colors.grey[800],
+          dialogBackgroundColor: Colors.grey[700],
+          dividerColor: Colors.grey[600],
+        ),
       home: const MainRouter()
     );
   }

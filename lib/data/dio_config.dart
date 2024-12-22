@@ -2,7 +2,7 @@ import 'package:dio/dio.dart';
 
 Dio getHttpClient() {
   BaseOptions options = BaseOptions(
-      baseUrl: "http://localhost:8080",
+      baseUrl: "http://10.0.2.2:8080",
       responseType: ResponseType.plain,
       validateStatus: (code) {
         if (code == null) {

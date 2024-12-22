@@ -54,6 +54,7 @@ class _MainRouterState extends State<MainRouter> {
             )
           ],
           onTap: _onItemTapped,
+          selectedItemColor: const Color.fromARGB(255, 38, 148, 88),
           currentIndex: _selectedIndex
       ),
     );
